@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { StyleSheet, Text, View, Alert } from "react-native";
+import { StyleSheet, Text, View, Alert, ImageBackground } from "react-native";
 import MeteoView from "./MeteoView";
 import { CirclesLoader, TextLoader } from "react-native-indicator";
 
@@ -23,6 +23,13 @@ export default class WelcomeScreen extends Component {
 
         this.onPress = this.onPress.bind(this);
     }
+
+    static navigationOptions = {
+        title: "Back",
+        headerStyle: {
+            height: 0
+        }
+    };
 
     componentWillMount() {
         this.getLocation();
@@ -72,18 +79,27 @@ export default class WelcomeScreen extends Component {
     render() {
         return (
             <View>
-                <MeteoView
-                    address={this.state.address}
-                    isLoaded={this.meteoCallBackIsLoaded.bind(this)}
-                />
-                {!this.state.isLoaded && (
-                    <View style={styles.container}>
-                        <View style={styles.circleLoader}>
-                            <CirclesLoader size={80} dotRadius={18} />
+                <ImageBackground
+                    source={require("../assets/backgroundimg.jpg")}
+                    style={{
+                        width: "100%",
+                        height: "100%"
+                    }}
+                >
+                    <MeteoView
+                        address={this.state.address}
+                        isLoaded={this.meteoCallBackIsLoaded.bind(this)}
+                        navigation={this.props.navigation}
+                    />
+                    {!this.state.isLoaded && (
+                        <View style={styles.container}>
+                            <View style={styles.circleLoader}>
+                                <CirclesLoader size={80} dotRadius={18} />
+                            </View>
+                            <TextLoader text="Nous cherchons votre position" />
                         </View>
-                        <TextLoader text="Nous cherchons votre position" />
-                    </View>
-                )}
+                    )}
+                </ImageBackground>
             </View>
         );
     }

@@ -3,7 +3,6 @@ import { Text, View, Alert, StyleSheet, Dimensions } from "react-native";
 import WeatherDaily from "./WeatherDaily";
 var width = Dimensions.get("window").width;
 var height = Dimensions.get("window").height;
-import * as Font from "expo-font";
 import { Ionicons } from "@expo/vector-icons";
 
 export default class MeteoView extends Component {
@@ -17,15 +16,24 @@ export default class MeteoView extends Component {
         this.meteoCallBackIsLoaded.bind(this);
     }
 
+    static navigationOptions = {
+        title: "Back",
+        headerStyle: {
+            height: 0
+        }
+    };
+
     componentWillReceiveProps(nextProps) {
         //request API meteo
-        console.log(nextProps);
         if (nextProps.address !== this.props.address) {
             this.getWeatherForcast(nextProps);
         }
     }
 
     getWeatherForcast(props) {
+        if (props.address.city == null) {
+            props.address.city = "Paris";
+        }
         var url =
             "https://api.openweathermap.org/data/2.5/forecast?q=" +
             props.address.city +
@@ -69,7 +77,6 @@ export default class MeteoView extends Component {
     }
 
     render() {
-        //console.log(this.state.weatherDays)
         return (
             <View
                 style={{
@@ -80,8 +87,23 @@ export default class MeteoView extends Component {
                 }}
             >
                 {this.state.isLoading && (
-                    <View style={{ flex: 2, justifyContent: "center" }}>
-                        <Text style={{ textAlign: "center", fontSize: 22 }}>
+                    <View
+                        style={{
+                            flex: 2,
+                            justifyContent: "center",
+                            backgroundColor: "rgba(255,255,255,0.1)"
+                        }}
+                    >
+                        <Text
+                            style={{
+                                textAlign: "center",
+                                fontSize: 26,
+                                color: "white",
+                                fontWeight: "bold",
+                                textTransform: "uppercase",
+                                fontFamily: "Nunito-Bold"
+                            }}
+                        >
                             {this.props.address.city}{" "}
                         </Text>
                     </View>
@@ -90,19 +112,15 @@ export default class MeteoView extends Component {
                 {this.state.weatherDays.map((days, key) => {
                     return (
                         <View key={key} style={styles.dayBloc}>
-                            <WeatherDaily data={days} />
+                            <WeatherDaily
+                                city={this.props.address.city}
+                                navigation={this.props.navigation}
+                                data={days}
+                            />
                         </View>
                     );
                 })}
-                {this.state.isLoading && (
-                    <View style={{ flex: 1 }}>
-                        <Ionicons
-                            name="md-checkmark-circle"
-                            size={32}
-                            color="green"
-                        />
-                    </View>
-                )}
+                {/* {this.state.isLoading && <View style={{ flex: 1 }} />} */}
             </View>
         );
     }
@@ -111,10 +129,10 @@ const styles = StyleSheet.create({
     dayBloc: {
         height: 50,
         width: width,
-        backgroundColor: "rgb(217, 245, 255)",
         flex: 2,
         justifyContent: "center",
         borderTopWidth: 0.5,
-        borderColor: "rgb(150, 150, 150)"
+        borderColor: "rgba(255, 255, 255, 0.8)",
+        backgroundColor: "rgba(255,255,255,0.2)"
     }
 });
